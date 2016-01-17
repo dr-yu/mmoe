@@ -2,12 +2,12 @@
 /*
 =====================================
 Multi Map Object Editor
-Version: 0.3.2
+Version: 0.3.3
 Copyright: 2014-2015, Yury Fedorov AKA Dr.Yu. yfedorov@gmail.com http://www.dryu.ru
 =====================================
 See README.TXT 
 */
-var mmoeVersion='0.3.2';
+var mmoeVersion='0.3.3';
 
 
 //==================================================================================================================================================
@@ -959,6 +959,41 @@ var mmoe_EditMapTypeMenu =  function (mapId)
 //==================================================================================================================================================
 var mmoe_EditPointMenu = function (pointId)
   {
+
+
+  var inputDecimalPositiveFilter = function (e) {
+        //console.log(e.target.value);
+        //console.log(e.keyCode);
+
+        // Allow: backspace, delete, tab, escape, enter and .
+        if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110]) !== -1 ||
+             // Allow: Ctrl+A
+            ($.inArray(e.keyCode, [65, 67, 86, 88, 90]) !== -1  && e.ctrlKey === true) || 
+             // Allow: home, end, left, right
+            (e.keyCode >= 35 && e.keyCode <= 39)) {
+                 // let it happen, don't do anything
+                 return;
+        }
+        // Ensure that it is a number and stop the keypress
+        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+            e.preventDefault();
+        }
+    };
+
+  var inputDecimalNegativeFilter = function (e) {
+        //.log(e.keyCode);
+
+        // Allow: backspace, delete, tab, escape, enter and .
+        if (e.keyCode == 173 && +e.target.selectionStart == 0 ) 
+         {
+           return;
+         }
+        inputDecimalPositiveFilter(e);
+
+    };
+
+
+
  // console.log("edit point "+pointId+MMOE_config.MMOE_obj.MMOE_points[pointId].name)
 
     $('#'+MMOE_config.MMOE_config_int.MMOE_PropertiesDivName).empty();
@@ -966,18 +1001,59 @@ var mmoe_EditPointMenu = function (pointId)
  
     str=str+'Имя:<br><input type="text" id="MMOE_PointName" value="'+MMOE_config.MMOE_obj.MMOE_points[pointId].name+'"></input>'
     str=str+'Координаты:<br>ГГ.ГГГГГГ°:<br>';
-    str=str+MMOE_config.MMOE_obj.MMOE_points[pointId].coordX+'<br>';
-    str=str+MMOE_config.MMOE_obj.MMOE_points[pointId].coordY+'<br>';
+    var coordX=MMOE_config.MMOE_obj.MMOE_points[pointId].coordX.split('.');
+    var coordY=MMOE_config.MMOE_obj.MMOE_points[pointId].coordY.split('.');
+    str=str+'X: <input type="text" id="MMOE_PointCoordsXgg_gggggg_1" maxlength="3" size="4" value="'+coordX[0]+'"></input>.'
+    str=str+'<input type="text" id="MMOE_PointCoordsXgg_gggggg_2" maxlength="6" size="6" value="'+coordX[1]+'"></input>°<br>'
+
+    str=str+'Y: <input type="text" id="MMOE_PointCoordsYgg_gggggg_1" maxlength="4" size="4"value="'+coordY[0]+'"></input>.'
+    str=str+'<input type="text" id="MMOE_PointCoordsYgg_gggggg_2" maxlength="6" size="6"value="'+coordY[1]+'"></input>°<br>'
+
+//    str=str+'X: <input type="text" id="MMOE_PointCoordsXgg_gggggg" value="'+MMOE_config.MMOE_obj.MMOE_points[pointId].coordX+'"></input><br>'
+//    str=str+'Y: <input type="text" id="MMOE_PointCoordsYgg_gggggg" value="'+MMOE_config.MMOE_obj.MMOE_points[pointId].coordY+'"></input><br>'
+//    str=str+MMOE_config.MMOE_obj.MMOE_points[pointId].coordX+'<br>';
+//    str=str+MMOE_config.MMOE_obj.MMOE_points[pointId].coordY+'<br>';
 
 
     str=str+'<input type="button" id="MMOE_PointSave" value="Сохранить"></input>'
     str=str+'<input type="button" id="MMOE_PointDelete" value="Удалить"></input>'
     str=str+'<a href="http://goondel.ucoz.ru/" target="_blank">Конвертер</a>';
     $('#'+MMOE_config.MMOE_config_int.MMOE_PropertiesDivName).append(str);
+
+    $("#MMOE_PointCoordsXgg_gggggg_1").keydown(inputDecimalNegativeFilter);
+    $("#MMOE_PointCoordsXgg_gggggg_2").keydown(inputDecimalPositiveFilter);
+    $("#MMOE_PointCoordsYgg_gggggg_1").keydown(inputDecimalNegativeFilter);
+    $("#MMOE_PointCoordsYgg_gggggg_2").keydown(inputDecimalPositiveFilter);
+
+
+    $('#MMOE_PointCoordsXgg_gggggg_1').on('input', function()
+      {
+//       console.log(MMOE_PointCoordsXgg_gggggg_1.value);
+      //  console.log($('#MMOE_PointCoordsXgg_gggggg_1').val()+'.'+$('#MMOE_PointCoordsXgg_gggggg_2').val());
+      //  console.log($('#MMOE_PointCoordsXgg_gggggg_1'));
+      });
+
+
+
     $('#MMOE_PointSave').click(function()
       {
+        if ($('#MMOE_PointCoordsXgg_gggggg_1').val() == ''){ $('#MMOE_PointCoordsXgg_gggggg_1').val('0')};
+        if ($('#MMOE_PointCoordsXgg_gggggg_2').val() == ''){ $('#MMOE_PointCoordsXgg_gggggg_2').val('0')};
+        if ($('#MMOE_PointCoordsYgg_gggggg_1').val() == ''){ $('#MMOE_PointCoordsYgg_gggggg_1').val('0')};
+        if ($('#MMOE_PointCoordsYgg_gggggg_2').val() == ''){ $('#MMOE_PointCoordsYgg_gggggg_2').val('0')};
+
+
+        MMOE_config.MMOE_obj.MMOE_points[pointId].coordX=$('#MMOE_PointCoordsXgg_gggggg_1').val()+'.'+$('#MMOE_PointCoordsXgg_gggggg_2').val();
+        MMOE_config.MMOE_obj.MMOE_points[pointId].coordY=$('#MMOE_PointCoordsYgg_gggggg_1').val()+'.'+$('#MMOE_PointCoordsYgg_gggggg_2').val();
+
+        if (parseFloat(MMOE_config.MMOE_obj.MMOE_points[pointId].coordX) > 85){MMOE_config.MMOE_obj.MMOE_points[pointId].coordX ='85.0'}
+        if (parseFloat(MMOE_config.MMOE_obj.MMOE_points[pointId].coordX) < -85){MMOE_config.MMOE_obj.MMOE_points[pointId].coordX ='-85.0'}
+        if (parseFloat(MMOE_config.MMOE_obj.MMOE_points[pointId].coordY) > 180){MMOE_config.MMOE_obj.MMOE_points[pointId].coordY ='180.0'}
+        if (parseFloat(MMOE_config.MMOE_obj.MMOE_points[pointId].coordY) < -180){MMOE_config.MMOE_obj.MMOE_points[pointId].coordY ='-180.0'}
+
         MMOE_config.MMOE_obj.MMOE_points[pointId].name=$('#MMOE_PointName').val();
         mmoe_InitObj();
+        mmoe_EditPointMenu(pointId)
     });
     $('#MMOE_PointDelete').click(function()
       {
@@ -1056,7 +1132,7 @@ var mmoe_EventButtonClick = function (ButtonId)
 //==================================================================================================================================================
 var mmoe_EventOnClick = function (objectType,objectId,coordX,coordY)
  {
- console.log("click. Type: "+objectType+" ID: "+objectId+' X:'+coordX+ 'Y: '+coordY)
+// console.log("click. Type: "+objectType+" ID: "+objectId+' X:'+coordX+ 'Y: '+coordY)
 
   switch (MMOE_config.MMOE_current_action) 
   {
@@ -1087,7 +1163,7 @@ var mmoe_EventOnClick = function (objectType,objectId,coordX,coordY)
 //==================================================================================================================================================
 var mmoe_EventOnMove = function (objectType,objectId,coordX,coordY)
  {
- console.log("MOVE. Type: "+objectType+" ID: "+objectId+' X:'+coordX+ 'Y: '+coordY)
+// console.log("MOVE. Type: "+objectType+" ID: "+objectId+' X:'+coordX+ 'Y: '+coordY)
 
      switch (objectType) 
        {
