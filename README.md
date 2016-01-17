@@ -1,6 +1,6 @@
 =====================================
 Multi Map Object Editor
-Version: 0.1
+Version: 0.2
 Copyright: 2014-2016, Yury Fedorov AKA Dr.Yu. yfedorov@gmail.com http://www.dryu.ru
 =====================================
 
@@ -22,6 +22,9 @@ Copyright: 2014-2016, Yury Fedorov AKA Dr.Yu. yfedorov@gmail.com http://www.dryu
 
 
 == +CHANGELOG ==============================================================================
+ Version: 0.2, 17.11.2014
+   Добавлены карты google
+
  Version: 0.1, 12.11.2014
    Первый релиз карт, карты yandex
 == -CHANGELOG ==============================================================================
