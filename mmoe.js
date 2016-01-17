@@ -1,4 +1,5 @@
 //Multi Map Object Editor
+//Version: 0.2.2, 19.11.2014
 //Version: 0.2.1, 17.11.2014
 //Version: 0.2, 17.11.2014
 //Version: 0.1, 12.11.2014, yandex maps api ver 2.1
@@ -166,6 +167,13 @@ MMOE_config = {
                                                      type: 'terrain',
                                                      name: 'Google - рельеф',
                                                    },
+                              MMOE_maps_GoogleOSM: {
+                                                     map: {},
+                                                     location: 'none',
+                                                     provider: 'GOOGLE',
+                                                     type: 'osm',
+                                                     name: 'OpenStreetMap',
+                                                   },
                            },   
                 MMOE_panels_cur: "MMOE_panels_1",
                 MMOE_panels_prev: "none",
@@ -312,12 +320,18 @@ MMOE_config = {
 mmoe_container='';
 //alertObj(MMOE_config)
 
+
+
+//==================================================================================================================================================
 var mmoe_init = function (mmoe_cont)
  { 
   mmoe_container=mmoe_cont;
   window.onload = mmoe_init_phase1_google;
  }
 
+
+
+//==================================================================================================================================================
 var mmoe_init_phase1_google = function ()
  {
    var script = document.createElement("script");
@@ -326,6 +340,9 @@ var mmoe_init_phase1_google = function ()
    document.body.appendChild(script);
  }
 
+
+
+//==================================================================================================================================================
 var mmoe_init_phase2_yandex = function ()
  {
    var script = document.createElement("script");
@@ -335,29 +352,14 @@ var mmoe_init_phase2_yandex = function ()
  }
 
 
+
+//==================================================================================================================================================
 var mmoe_init_phase_final =  function ()
  {
- //  mmoe_container=MMOE_CONT;
-//Размеры инфоокон
-//   MMOEtopHeight='30px';
-//   MMOEdownHeight='20px';
-//   MMOEleftWight='80px';
-//   MMOErightWight='80px';
-
-//MMOE_config.MMOE_config_int.
-
-// Служебные переменные
-//   MMOEmapcenterchanged=0;
-//   MMOEmapzoomchanged=0;
-
-
-//   var divglobal = document.getElementById(mmoe_container);
-
     mmoe_InitBasicdiv(mmoe_container);
     mmoe_CreatePanelSelectElement();
     mmoe_InitMaps();
     mmoe_ChangePanel(MMOE_config.MMOE_panels_cur);
-
  }
 
 
@@ -541,10 +543,27 @@ var mmoe_InitGoogleMap =  function (mapId)
      center: new google.maps.LatLng(MMOE_config.MMOE_config_int.MMOEmapCenterX, MMOE_config.MMOE_config_int.MMOEmapCenterY),
      zoom: MMOE_config.MMOE_config_int.MMOEmapZoom,
      disableDefaultUI: true,
-     mapTypeId: MMOE_config.MMOE_maps[mapId].type
+//     mapTypeId: MMOE_config.MMOE_maps[mapId].type
    };
    var MMOE_gmap = new google.maps.Map(document.getElementById(mapId),
        mapOptions);
+
+   var openStreet = new google.maps.ImageMapType(
+     {
+       getTileUrl: function(ll, z) 
+         {
+          var X = ll.x % (1 << z);  // wrap
+          return "http://tile.openstreetmap.org/" + z + "/" + X + "/" + ll.y + ".png";
+         },
+       tileSize: new google.maps.Size(256, 256),
+		  isPng: true,
+		  maxZoom: 18,
+		  name: "OSM",
+		  alt: "Слой с Open Streetmap"
+     }); 
+ 
+    MMOE_gmap.mapTypes.set('osm', openStreet);
+    MMOE_gmap.setMapTypeId(MMOE_config.MMOE_maps[mapId].type);
 
    google.maps.event.addDomListener(MMOE_gmap, 'tilesloaded', function(){
     // Отключаем копирайты. Мешают.
@@ -621,9 +640,9 @@ var mmoe_SetMapZoom =  function (mapId,zoom)
 //==================================================================================================================================================
 var mmoe_ChangeMapType =  function (container,mapId)
  {
-   console.log('newmap panel '+MMOE_config.MMOE_panels_cur);
-   console.log('newmap container '+container);
-   console.log('newmap mapId '+mapId);
+//   console.log('newmap panel '+MMOE_config.MMOE_panels_cur);
+//   console.log('newmap container '+container);
+//   console.log('newmap mapId '+mapId);
 //   var targetpanel=MMOE_config.MMOE_panels[MMOE_config.MMOE_panels_cur];
 //   console.log('newmap targetpanel '+targetpanel);
    MMOE_config.MMOE_panels[MMOE_config.MMOE_panels_cur].divs[container].MapType=mapId;
@@ -634,7 +653,7 @@ var mmoe_ChangeMapType =  function (container,mapId)
 //==================================================================================================================================================
 var mmoe_MakeMapTypeDialog =  function (mapId)
  {
-   console.log('Click from '+mapId);
+//   console.log('Click from '+mapId);
 //   console.log('location '+MMOE_config.MMOE_maps[mapId].location);
    $('#MMOEleft').empty();
    var str='<select onchange="mmoe_ChangeMapType(\''+MMOE_config.MMOE_maps[mapId].location+'\', this.options[this.selectedIndex].value)" >';

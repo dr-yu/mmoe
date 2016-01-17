@@ -1,6 +1,6 @@
 =====================================
 Multi Map Object Editor
-Version: 0.2.1
+Version: 0.2.2
 Copyright: 2014-2016, Yury Fedorov AKA Dr.Yu. yfedorov@gmail.com http://www.dryu.ru
 =====================================
 
@@ -22,6 +22,9 @@ Copyright: 2014-2016, Yury Fedorov AKA Dr.Yu. yfedorov@gmail.com http://www.dryu
 
 
 == +CHANGELOG ==============================================================================
+ Version: 0.2.2, 19.11.2014-24.11.2014
+   Добавлена карта OpenStreetMap
+
  Version: 0.2.1, 17.11.2014-19.11.2014
    Полностью переработана внутренняя логика
    Введен объект MMOE_config, Все фунции работают только с ним. 
