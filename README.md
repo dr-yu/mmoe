@@ -1,6 +1,6 @@
 =====================================
 Multi Map Object Editor
-Version: 0.2.2
+Version: 0.3
 Copyright: 2014-2016, Yury Fedorov AKA Dr.Yu. yfedorov@gmail.com http://www.dryu.ru
 =====================================
 
@@ -22,6 +22,9 @@ Copyright: 2014-2016, Yury Fedorov AKA Dr.Yu. yfedorov@gmail.com http://www.dryu
 
 
 == +CHANGELOG ==============================================================================
+ Version: 0.3, 24.11.2014-19.12.2014
+   Добавлено создание точек
+
  Version: 0.2.2, 19.11.2014-24.11.2014
    Добавлена карта OpenStreetMap
 
