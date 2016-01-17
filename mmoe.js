@@ -1,4 +1,13 @@
 //Multi Map Object Editor
+//ToDo:
+
+
+
+//Version: 0.3.1, 19.12.2014
+// Добавлено редактирование и удаление точек
+// Добавлены блоки(div) Properties и Objects - для редактирования объектов и свойств 
+// Добавлено перетаскивание точек
+
 //Version: 0.3, 24.11.2014
 // Добавлено создание точек
 //
@@ -144,6 +153,8 @@ MMOE_config = {
                                    MMOE_PrimaryWSDivName: 'MMOEleft',
                                    MMOE_SecondaryWSDivName: 'MMOEright',
                                    MMOE_ActionButtonsDivName: 'MMOEactionButtons',
+                                   MMOE_PropertiesDivName: 'MMOEproperties',
+                                   MMOE_ObjectsDivName: 'MMOEobjects',
                                    MMOE_MapZoom: 8,
                                    MMOE_MapCenterX: 55.76,
                                    MMOE_MapCenterY: 37.64,
@@ -258,7 +269,7 @@ MMOE_config = {
                                                         //Название внутреннего DIV
                                                         MMOE_panels_1_d1:  {
                                                                            // Тип карты в этом контейнере.
-                                                                           MapType: 'MMOE_maps_GoogleRoadmap',
+                                                                           MapType: 'MMOE_maps_YandexMap',
                                                                            // Стиль для создаваемого DIV
                                                                            DivStyle: "width: 100%; height: 100%; background-color: blue;",
                                                                          } 
@@ -463,50 +474,20 @@ var mmoe_init_phase_final =  function ()
 //==================================================================================================================================================
 var mmoe_InitBasicdiv =  function (mmoe_container)
  {
-// Создаем базовые div
-
-//MMOE_config.MMOE_config_int.MMOE_TopDivSize
-//MMOE_config.MMOE_config_int.MMOE_TopMenuDivName
-//MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_TopMenuDivName].size
-
-//MMOE_config.MMOE_config_int.MMOE_DownDivSize
-//MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_InfobarDivName].size
-
-//MMOE_config.MMOE_config_int.MMOE_LeftDivSize
-//MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_PrimaryWSDivName].size
-
-//MMOE_config.MMOE_config_int.MMOE_RightDivSize
-//MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_SecondaryWSDivName].size
-
-
    $('#'+mmoe_container).append('<div id="MMOEtop" style="width: 100%; padding-top: 4px; height:'+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_TopMenuDivName].size+'; background-colr: blue;"></div>');
-//   $('#'+mmoe_container).append('<div id="MMOEint" style="position: relative; width: -moz-calc(100% - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_PrimaryWSDivName].size+' - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_SecondaryWSDivName].size+'); height: -webkit-calc(100% - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_PrimaryWSDivName].size+' - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_SecondaryWSDivName].size+'); height: calc(100% - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_PrimaryWSDivName].size+' - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_SecondaryWSDivName].size+');  height: -moz-calc(100% - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_TopMenuDivName].size+' - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_InfobarDivName].size+'); height: -webkit-calc(100% - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_TopMenuDivName].size+' - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_InfobarDivName].size+'); height: calc(100% - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_TopMenuDivName].size+' - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_InfobarDivName].size+');"></div>');
-//   $('#'+mmoe_container).append('<div id="MMOEint" style="position: relative; width: 100%;  height: -moz-calc(100% - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_TopMenuDivName].size+' - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_InfobarDivName].size+'); height: -webkit-calc(100% - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_TopMenuDivName].size+' - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_InfobarDivName].size+'); height: calc(100% - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_TopMenuDivName].size+' - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_InfobarDivName].size+');"></div>');
-//   $('#MMOEint').append('<div id="MMOEright" style="opacity: 0.5; width: '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_SecondaryWSDivName].size+'; height: 100%; position: absolute; top: 0px; right: 0px; background-color: yellow; "></div>');
-//   $('#MMOEint').append('<div id="MMOEright" style="opacity: 0.5; width: '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_SecondaryWSDivName].size+'; height: 100%; position: absolute; top: 0px; right: 0px; z-index: 100; background-color: yellow; "></div>');
-//   $('#MMOEint').append('<div id="MMOEleft" style="opacity: 0.5; width: '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_PrimaryWSDivName].size+'; height: 100%;  background-color: green;"></div>');
-//   $('#MMOEint').append('<div id="MMOEleft" style="opacity: 0.5; width: '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_PrimaryWSDivName].size+'; height: 100%; position: absolute; top: 0px; left: 0px; z-index: 100; background-color: green;"></div>');
    $('#'+mmoe_container).append('<div id="MMOEmiddle" style="position: relative; width: 100%;  height: -moz-calc(100% - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_TopMenuDivName].size+' - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_InfobarDivName].size+'); height: -webkit-calc(100% - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_TopMenuDivName].size+' - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_InfobarDivName].size+'); height: calc(100% - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_TopMenuDivName].size+' - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_InfobarDivName].size+');"></div>');
 
    $('#MMOEmiddle').append('<div id="MMOEleft"  style="float: left; width: '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_PrimaryWSDivName].size+'; height: 100%; background-color: green;"></div>');
    $('#MMOEmiddle').append('<div id="MMOEint"   style="float: left; width: -moz-calc(100% - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_PrimaryWSDivName].size+' - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_SecondaryWSDivName].size+'); width: -webkit-calc(100% - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_PrimaryWSDivName].size+' - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_SecondaryWSDivName].size+'); width: calc(100% - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_PrimaryWSDivName].size+' - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_SecondaryWSDivName].size+'); height:  100%;"></div>');
    $('#MMOEmiddle').append('<div id="MMOEright" style="float: left; width: '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_SecondaryWSDivName].size+'; height: 100%; background-color: yellow; "></div>');
 
+   $('#MMOEleft').append('<div id="MMOEproperties"  style="float: left; overflow-y: scroll; width: 100%; max-height: 25%; background-color: red;"></div>');
+   $('#MMOEleft').append('<div id="MMOEobjects"  style="float: left; overflow-y: scroll; width: 100%; max-height: 75%; background-color: blue;"></div>');
+
    $('#'+mmoe_container).append('<div id="MMOEdown" style="width: 100%; height:'+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_InfobarDivName].size+'; background-colr: blue; float: none;"></div>');
    $('#'+mmoe_container).append('<div id="MMOEnull" style="width: 0px; height: 0px; display: none;"></div>');
-//   $('#'+mmoe_container).append('<div id="" style=""></div>');
-//   $('#'+mmoe_container).append('<div id="" style=""></div>');
 
  }
-
-//==================================================================================================================================================
-//var mmoe_AddButton =  function (TargetDiv,ButtonId,Title,ImgSource)
-// {
-//   str='<button id="'+ButtonId+'" title="'+Title+'" type="button" style=" padding: 0px; border-width: 0px; width: 19px; height: 19px; border-width: 0px 3px 3px 0px;  border-style: solid;  display: inline-block; background: url(\''+ImgSource+'\') no-repeat; " onclick="mmoe_EventButtonClick(\''+ButtonId+'\')">'
-//   str=str+'</button>';
-//   $('#'+TargetDiv).append(str);
-// }
-
 
 //==================================================================================================================================================
 var mmoe_InitTopMenu =  function ()
@@ -546,10 +527,6 @@ var mmoe_InitTopMenu =  function ()
       $('#'+curbutton+'Div').append(str);
     }
    mmoe_EventButtonClick(MMOE_config.MMOE_current_action);
-
-
-//  mmoe_AddButton('MMOEactionButtons','MMOEbuttonArrow','Перемещение','images/pointer_5685.png');
-//<img src="images/menu1.jpg" onmouseover="this.src = 'images/menu1_a.jpg'" onmouseout="this.src = 'images/menu1.jpg'" onclick="this.src = 'images/menu1_a1.jpg'"alt="">
 	
  }
 
@@ -559,8 +536,7 @@ var mmoe_InitTopMenu =  function ()
 //==================================================================================================================================================
 var mmoe_ChangePanel =  function (panel)
  {
-   $('#MMOEleft').empty();
-
+      $('#'+MMOE_config.MMOE_config_int.MMOE_PropertiesDivName).empty();
   //Бэкапим координаты центра карты и zoom;
   var centerX= MMOE_config.MMOE_config_int.MMOE_MapCenterX;
   var centerY= MMOE_config.MMOE_config_int.MMOE_MapCenterY;
@@ -849,14 +825,30 @@ var mmoe_InitObj = function ()
                      position: myLatlng,
                      map: MMOE_config.MMOE_maps[curmap].map,
      //                title: MMOE_config.MMOE_obj.MMOE_points[curpoint].name,
-     //                icon: icon,
-       labelContent: MMOE_config.MMOE_obj.MMOE_points[curpoint].name,
-       labelAnchor: new google.maps.Point(22, 0),
-       labelClass: "labels", // the CSS class for the label
-       labelStyle: {opacity: 0.75} ,
-                    icon: icon,
+                     labelContent: MMOE_config.MMOE_obj.MMOE_points[curpoint].name,
+                     labelAnchor: new google.maps.Point(22, 0),
+                     labelClass: "labels", // the CSS class for the label
+                     labelStyle: {opacity: 0.75} ,
+                     icon: icon,
+                     draggable: true,
+
 
                    });
+
+                 var setgoogleevent =  function (mmoeid)
+                   {
+                  
+                     google.maps.event.addListener(marker, 'click', function() {
+                       mmoe_EventOnClick('point', mmoeid,marker.getPosition().lat(),marker.getPosition().lng());
+                     });
+                     google.maps.event.addListener(marker, 'dragend', function(event) {
+//                       alertObj(marker.getPosition());
+                       //alertObj(event.latLng);
+                       mmoe_EventOnMove('point', mmoeid, event.latLng.lat(), event.latLng.lng());
+                     });
+                   }
+ 
+                setgoogleevent(curpoint);
                  MMOE_config.MMOE_maps[curmap].markers.push(marker);
 
                }
@@ -872,29 +864,34 @@ var mmoe_InitObj = function ()
 
              for(curpoint in MMOE_config.MMOE_obj.MMOE_points) 
                {
-                 myGeoObject = new ymaps.GeoObject(
+                myGeoObject = new ymaps.Placemark(
+                   [MMOE_config.MMOE_obj.MMOE_points[curpoint].coordX, MMOE_config.MMOE_obj.MMOE_points[curpoint].coordY],
                    {
-                    // Описание геометрии.
-                     geometry: {
-                                 type: "Point",
-                                 coordinates: [MMOE_config.MMOE_obj.MMOE_points[curpoint].coordX, MMOE_config.MMOE_obj.MMOE_points[curpoint].coordY]
-              // coordinates: [55.8, 37.8]
-                               },
-                   // Свойства.
-                     properties: {
-                                  // Контент метки.
-                                   iconContent: MMOE_config.MMOE_obj.MMOE_points[curpoint].name,
-                               //    hintContent: 'Ну давай уже тащи'
-                                 }
-                   },         
+                     iconContent: MMOE_config.MMOE_obj.MMOE_points[curpoint].name,
+                   },
                    {
-                    // Опции.
-                   // Иконка метки будет растягиваться под размер ее содержимого.
-                    preset: 'islands#blackStretchyIcon',
-                    // Метку можно перемещать.
-        //            draggable: true
-                  });
-              //   alertObj(myGeoObject.geometry);
+                     iconLayout: 'default#imageWithContent',
+                     iconImageHref: 'images/chart.gif', // картинка иконки
+                     iconImageSize: [21, 34], // размер иконки
+                     iconImageOffset: [-10, -40], // позиция иконки
+                     iconContentOffset: [0, 40],
+                    draggable: true,
+                   });
+//                myGeoObject.mmoeId=curpoint;
+
+                var setyandexevent =  function (mmoeid)
+                  {
+                     myGeoObject.events.add('click', function (event) 
+                       {
+                         mmoe_EventOnClick('point', mmoeid, event.get('coords')[0], event.get('coords')[1]);
+                       });
+
+                    myGeoObject.events.add('dragend', function (event) 
+                      {
+                       mmoe_EventOnMove('point', mmoeid, event.originalEvent.target.geometry.getCoordinates()[0], event.originalEvent.target.geometry.getCoordinates()[1]);
+                      });
+                  }
+                setyandexevent(curpoint);
 
                 MMOE_config.MMOE_maps[curmap].map.geoObjects.add(myGeoObject)
               }
@@ -914,6 +911,7 @@ var mmoe_CreatePoint = function (coordX,coordY)
     pointId='Point'+MMOE_config.MMOE_obj.MMOE_newpoint_id;
     MMOE_config.MMOE_obj.MMOE_newpoint_id++;
     Point.name=pointId;
+    Point.id=pointId;
     Point.coordX=coordX;
     Point.coordY=coordY;
     MMOE_config.MMOE_obj.MMOE_points[pointId]=Point;
@@ -928,8 +926,10 @@ var mmoe_EditMapTypeMenu =  function (mapId)
  {
 //   console.log('Click from '+mapId);
 //   console.log('location '+MMOE_config.MMOE_maps[mapId].location);
-   $('#'+MMOE_config.MMOE_config_int.MMOE_PrimaryWSDivName).empty();
-   var str='<select onchange="mmoe_ChangeMapType(\''+MMOE_config.MMOE_maps[mapId].location+'\', this.options[this.selectedIndex].value)" >';
+   $('#'+MMOE_config.MMOE_config_int.MMOE_PropertiesDivName).empty();
+   var str='Тип карты:';
+
+   str=str+'<select onchange="mmoe_ChangeMapType(\''+MMOE_config.MMOE_maps[mapId].location+'\', this.options[this.selectedIndex].value)" >';
 
  //  var str='<select>';
    for(curmap in MMOE_config.MMOE_maps) {
@@ -945,7 +945,7 @@ var mmoe_EditMapTypeMenu =  function (mapId)
 
   str=str+'</select>';
 
-  $('#'+MMOE_config.MMOE_config_int.MMOE_PrimaryWSDivName).append(str);
+  $('#'+MMOE_config.MMOE_config_int.MMOE_PropertiesDivName).append(str);
 
 
 
@@ -955,19 +955,35 @@ var mmoe_EditMapTypeMenu =  function (mapId)
 
 
 //==================================================================================================================================================
-var mmoe_EditPointMenu = function (PointId)
+var mmoe_EditPointMenu = function (pointId)
   {
+ // console.log("edit point "+pointId+MMOE_config.MMOE_obj.MMOE_points[pointId].name)
 
-    $('#'+MMOE_config.MMOE_config_int.MMOE_PrimaryWSDivName).empty();
-   str='<input type="text" id="MMOE_MapName" value="'+MMOE_config.MMOE_obj.MMOE_points[pointId].name+'"></input>'
-  $('#'+MMOE_config.MMOE_config_int.MMOE_PrimaryWSDivName).append(str);
-  $('#MMOE_MapName').change(function()
-    {
-     MMOE_config.MMOE_obj.MMOE_points[pointId].name=$('#MMOE_MapName').val();
-     mmoe_InitObj();
-//     alert($('#MMOE_MapName').val());
+    $('#'+MMOE_config.MMOE_config_int.MMOE_PropertiesDivName).empty();
+    var str='Редактировать метку';
+ 
+    str=str+'<input type="text" id="MMOE_PointName" value="'+MMOE_config.MMOE_obj.MMOE_points[pointId].name+'"></input>'
+    str=str+'Координаты:<br>';
+    str=str+MMOE_config.MMOE_obj.MMOE_points[pointId].coordX+'<br>';
+    str=str+MMOE_config.MMOE_obj.MMOE_points[pointId].coordY+'<br>';
 
+
+    str=str+'<input type="button" id="MMOE_PointSave" value="Сохранить"></input>'
+    str=str+'<input type="button" id="MMOE_PointDelete" value="Удалить"></input>'
+
+    $('#'+MMOE_config.MMOE_config_int.MMOE_PropertiesDivName).append(str);
+    $('#MMOE_PointSave').click(function()
+      {
+        MMOE_config.MMOE_obj.MMOE_points[pointId].name=$('#MMOE_PointName').val();
+        mmoe_InitObj();
     });
+    $('#MMOE_PointDelete').click(function()
+      {
+        delete MMOE_config.MMOE_obj.MMOE_points[pointId];
+        $('#'+MMOE_config.MMOE_config_int.MMOE_PropertiesDivName).empty();
+        mmoe_InitObj();
+    });
+   
   }
 
 
@@ -996,17 +1012,20 @@ var mmoe_EventButtonClick = function (ButtonId)
  }
 
 //==================================================================================================================================================
-var mmoe_EventOnClick = function (obectType,objectId,coordX,CoordY)
+var mmoe_EventOnClick = function (objectType,objectId,coordX,coordY)
  {
+ console.log("click. Type: "+objectType+" ID: "+objectId+' X:'+coordX+ 'Y: '+coordY)
+
   switch (MMOE_config.MMOE_current_action) 
   {
    case 'MMOE_ab_Select':
-     switch (obectType) 
+     switch (objectType) 
        {
          case 'map':
              mmoe_EditMapTypeMenu(objectId);
          break
          case 'point':
+             mmoe_EditPointMenu(objectId);
          break
          case 'track':
          break
@@ -1014,12 +1033,35 @@ var mmoe_EventOnClick = function (obectType,objectId,coordX,CoordY)
        };
    break
    case 'MMOE_ab_Point':
-     mmoe_CreatePoint(coordX,CoordY);
+     mmoe_CreatePoint(coordX,coordY);
    break
    case 'MMOE_ab_Track':
    break
 
   };   
+
+ }
+
+//==================================================================================================================================================
+var mmoe_EventOnMove = function (objectType,objectId,coordX,coordY)
+ {
+ console.log("MOVE. Type: "+objectType+" ID: "+objectId+' X:'+coordX+ 'Y: '+coordY)
+
+     switch (objectType) 
+       {
+         case 'map':
+//             mmoe_EditMapTypeMenu(objectId);
+         break
+         case 'point':
+           MMOE_config.MMOE_obj.MMOE_points[objectId].coordX=coordX;
+           MMOE_config.MMOE_obj.MMOE_points[objectId].coordY=coordY;
+           mmoe_InitObj();
+           mmoe_EditPointMenu(objectId);
+         break
+         case 'track':
+         break
+
+       };
 
  }
 
