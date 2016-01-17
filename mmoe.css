@@ -1,0 +1,75 @@
+
+
+
+ #MMOEtop {
+   padding-top: 2px;
+   background-color: #00ffff;
+   border-bottom: 0px solid gray;
+ }
+ #MMOEdown {
+   padding-top: 2px;
+   background-color: #00ffff;
+   border-bottom: 0px solid gray;
+ }
+
+ #MMOEleft_int {
+   b!ackground-color: #00ffff;
+   border-right: 0px solid gray;
+ }
+ #MMOEleft {
+   background-color: #00ffff;
+ }
+
+ #MMOEright {
+   background-color: #00ffff;
+ }
+
+ #MMOEint {
+   border-left: 0px solid gray;
+ }
+
+#MMOEproperties {
+ !background-color: red;
+ padding-left: 8px;
+}
+#MMOEchangePanelDiv{
+ margin-left: 2px;
+}
+
+
+#MMOEactionButtons{
+ margin-left: 10px;
+}
+
+.MMOE_action_buttons_div {
+ float: left; 
+ width: 19px; 
+ height: 19px; 
+ margin-right: 5px;
+ background-color: #ffffff;
+
+}
+
+.MMOE_action_button{
+  padding: 0px;
+  width: 19px;
+  height: 19px;
+
+  border-style: solid;
+  border-color: #669999;
+ display: inline-block; 
+
+}
+
+.MMOE_map_div{
+  width: 100%;
+  height: 100%;
+  border: 0px solid black;
+  padding: 0px;
+}
+
+.MMOE_panel_div{
+  !border: 1px solid black;
+  padding: 0px;
+  margin: 0px;
+}

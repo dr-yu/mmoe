@@ -1,91 +1,14 @@
-//Multi Map Object Editor
-//ToDo:
 
+/*
+=====================================
+Multi Map Object Editor
+Version: 0.3.2
+Copyright: 2014-2015, Yury Fedorov AKA Dr.Yu. yfedorov@gmail.com http://www.dryu.ru
+=====================================
+See README.TXT 
+*/
+var mmoeVersion='0.3.2';
 
-
-//Version: 0.3.1, 19.12.2014
-// Добавлено редактирование и удаление точек
-// Добавлены блоки(div) Properties и Objects - для редактирования объектов и свойств 
-// Добавлено перетаскивание точек
-
-//Version: 0.3, 24.11.2014
-// Добавлено создание точек
-//
-//Version: 0.2.2, 19.11.2014
-// Добавлена карта OpenStreetMap
-//
-//Version: 0.2.1, 17.11.2014
-// Полностью переработана внутренняя логика
-// Введен объект MMOE_config, Все фунции работают только с ним. 
-// Добавлена возможность выбора набора окон
-// Добавлена возможность выбора типа карты (при клике на карту)
-//
-//Version: 0.2, 17.11.2014
-// Добавлены карты google
-//
-//Version: 0.1, 12.11.2014
-// Первый релиз карт, карты yandex
-
-//Варианты расположения:
-//MMOE_panels_1 Одна карта
-//  ┌─┬─┐
-//  ├─┼─┤
-//  └─┴─┘
-//
-//MMOE_panels_1x2 Две карты рядом по горизонтали
-//  ┌───┐
-//  ├───┤
-//  └───┘
-//
-//MMOE_panels_2x1 Две карты рядом по вертикали
-//  ┌─┬─┐
-//  │ │ │
-//  └─┴─┘
-//
-//MMOE_panels_1_1x2 Одна карта сверху, две рядом по вертикали снизу
-//  ┌───┐
-//  ├─┬─┤
-//  └─┴─┘
-//
-//MMOE_panels_1x2_1 Две рядом по вертикали сверху, одна карта снизу
-//  ┌─┬─┐
-//  ├─┴─┤
-//  └───┘
-//
-//MMOE_panels_2x2 Четыре карты
-//  ┌─┬─┐
-//  ├─┼─┤
-//  └─┴─┘
-//
-//  ┌┬──┐
-//  ├┤  │
-//  └┴──┘
-//
-//  ┌──┬┐
-//  │  ├┤
-//  └──┴┘
-//
-//  ┌───┐
-//  ├┬─┬┤
-//  └┴─┴┘
-//
-
-
-// Yandex:
-//    'yandex#map' - тип карты "схема";
-//    'yandex#satellite' - тип карты "спутник";
-//    'yandex#hybrid' - тип карты "гибрид";
-//    'yandex#publicMap' - тип карты "народная карта";
-//    'yandex#publicMapHybrid' - тип карты "народный гибрид".
-//
-
-// Google:
-//    MapTypeId.ROADMAP – дорожная карта, используемая по умолчанию.
-//    MapTypeId.SATELLITE – снимки Google Планета Земля, сделанные со спутника.
-//    MapTypeId.HYBRID – комбинация обычной карты и снимков со спутника.
-//    MapTypeId.TERRAIN – физическая карта, основанная на информации о ландшафте. 
-//
-//
 
 //==================================================================================================================================================
 
@@ -110,6 +33,22 @@ function alertObj(obj) {
 }  
 
 
+//==================================================================================================================================================
+function loadjscssfile(filename, filetype){
+ if (filetype=="js"){ //if filename is a external JavaScript file
+  var fileref=document.createElement('script')
+  fileref.setAttribute("type","text/javascript")
+  fileref.setAttribute("src", filename)
+ }
+ else if (filetype=="css"){ //if filename is an external CSS file
+  var fileref=document.createElement("link")
+  fileref.setAttribute("rel", "stylesheet")
+  fileref.setAttribute("type", "text/css")
+  fileref.setAttribute("href", filename)
+ }
+ if (typeof fileref!="undefined")
+  document.getElementsByTagName("head")[0].appendChild(fileref)
+}
 
 //==================================================================================================================================================
 function dhtmlLoadScript(url)
@@ -120,21 +59,22 @@ function dhtmlLoadScript(url)
    document.getElementsByTagName("head")[0].appendChild(e); 
 }
 
+
 //==================================================================================================================================================
 
 MMOE_config = {
                 MMOE_divs_int: {
                                  MMOEtop:  {
-                                             size: '24px',
+                                             size: '23px',
                                            },
                                  MMOEdown: {
                                              size: '20px',
                                            },
                                  MMOEleft: {
-                                             size: '200px',
+                                             size: '210px',
                                            },
                                  MMOEright: {
-                                             size: '0px',
+                                             size: '210px',
                                            },
                                  MMOEactionButtons: {
                                                       style: '',
@@ -158,6 +98,7 @@ MMOE_config = {
                                    MMOE_MapZoom: 8,
                                    MMOE_MapCenterX: 55.76,
                                    MMOE_MapCenterY: 37.64,
+                                   MMOE_CoordsLength: 6,
                                  },
 
                 MMOE_current_action: 'MMOE_ab_Select',
@@ -171,10 +112,10 @@ MMOE_config = {
                                                        title: 'Создать точку',
                                                        img: 'images/mmoe_button_point.png',
                                                      },   
-                                      MMOE_ab_Track: {
-                                                       title: 'Создать путь',
-                                                       img: 'images/mmoe_button_track.png',
-                                                     },   
+//                                      MMOE_ab_Track: {
+//                                                       title: 'Создать путь',
+//                                                       img: 'images/mmoe_button_track.png',
+//                                                     },   
                                      },
                 // MMOE_maps - Варианты карт
                 MMOE_maps: { 
@@ -255,13 +196,16 @@ MMOE_config = {
                                                      name: 'OpenStreetMap',
                                                    },
                            },   
-                MMOE_panels_cur: "MMOE_panels_1",
+                MMOE_panels_cur: "MMOE_panels_1x2",
 //                MMOE_panels_prev: "none",
                 // MMOE_panels - Варианты расположения окон карт на экране.
                 MMOE_panels: {
                                // Название контейнера используется как глобальный DIV. Для наименования используются подчеркивания ( _ )
                                MMOE_panels_1: {
-
+                               //  ┌─┬─┐
+                               //  ├─┼─┤
+                               //  └─┴─┘
+                                
                                                 //Наименование для меню     
                                                 name: "Одна карта",
                                                 //DIV внутри контейнера
@@ -269,56 +213,65 @@ MMOE_config = {
                                                         //Название внутреннего DIV
                                                         MMOE_panels_1_d1:  {
                                                                            // Тип карты в этом контейнере.
-                                                                           MapType: 'MMOE_maps_YandexMap',
+                                                                           MapType: 'MMOE_maps_GoogleRoadmap',
                                                                            // Стиль для создаваемого DIV
-                                                                           DivStyle: "width: 100%; height: 100%; background-color: blue;",
+                                                                           DivStyle: "width: 100%; height: 100%;",
                                                                          } 
                                                       }  
                                               },
                                MMOE_panels_1x2: {
+                              //  ┌───┐
+                              //  ├───┤
+                              //  └───┘
                                                   name: "Две карты рядом по горизонтали",
                                                   divs: {
                                                           MMOE_panels_1x2_d1:  {
                                                                                  MapType: 'MMOE_maps_YandexMap',
-                                                                                 DivStyle: "width: 50%; height: 100%; float: left; background-color: red;",
+                                                                                 DivStyle: "width: 50%; height: 100%; float: left;",
                                                                                },
                                                           MMOE_panels_1x2_d2:  {
-                                                                                 MapType: 'MMOE_maps_YandexSatellite',
-                                                                                 DivStyle: "width: 50%; height: 100%; float: left; background-color: blue;",
+                                                                                 MapType: 'MMOE_maps_GoogleRoadmap',
+                                                                                 DivStyle: "width: 50%; height: 100%; float: left;",
                                                                                } 
                                                         }  
                                                 },
                                MMOE_panels_2x1: {
+                               //  ┌─┬─┐
+                               //  │ │ │
+                               //  └─┴─┘
                                                   name: "Две карты друг над другом",
                                                   divs: {
                                                           MMOE_panels_2x1_d1:  {
                                                                                  MapType: 'MMOE_maps_YandexMap',
-                                                                                 DivStyle: "width: 100%; height: 50%; float: left; background-color: red;",
+                                                                                 DivStyle: "width: 100%; height: 50%; float: left;",
                                                                                },
                                                           MMOE_panels_2x1_d2:  {
                                                                                  MapType: 'MMOE_maps_GoogleSatellite',
-                                                                                 DivStyle: "width: 100%; height: 50%; float: left; background-color: blue;",
+                                                                                 DivStyle: "width: 100%; height: 50%; float: left;",
                                                                                } 
                                                         }  
                                                 },
                                MMOE_panels_2x2: {
+                               //  ┌─┬─┐
+                               //  ├─┼─┤
+                               //  └─┴─┘
                                                   name: "Четыре карты сеткой",
                                                   divs: {
                                                           MMOE_panels_2x2_d1:  {
                                                                                  MapType: 'MMOE_maps_YandexMap',
-                                                                                 DivStyle: "width: 50%; height: 50%; float: left; background-color: red;",
+                                                                                 DivStyle: "width: 50%; height: 50%; float: left;",
                                                                                },
                                                           MMOE_panels_2x2_d2:  {
                                                                                  MapType: 'MMOE_maps_YandexSatellite',
-                                                                                 DivStyle: "width: 50%; height: 50%; float: left; background-color: blue;",
+                                                                                 DivStyle: "width: 50%; height: 50%; float: left;",
                                                                                }, 
                                                           MMOE_panels_2x2_d3:  {
                                                                                  MapType: 'MMOE_maps_GoogleRoadmap',
-                                                                                 DivStyle: "width: 50%; height: 50%; float: left; background-color: red;",
+                                                                                 DivStyle: "width: 50%; height: 50%; float: left;",
                                                                                },
                                                           MMOE_panels_2x2_d4:  {
                                                                                  MapType: 'MMOE_maps_GoogleSatellite',
-                                                                                 DivStyle: "width: 50%; height: 50%; float: left; background-color: blue;",
+                                                                                 DivStyle: "width: 50%; height: 50%; float: left;",
                                                                                }, 
                                                         }  
                                                 },
@@ -327,72 +280,91 @@ MMOE_config = {
                                                   divs: {
                                                           MMOE_panels_2x4_d1:  {
                                                                                  MapType: 'MMOE_maps_YandexMap',
-                                                                                 DivStyle: "width: 25%; height: 50%; float: left; background-color: red;",
+                                                                                 DivStyle: "width: 25%; height: 50%; float: left;",
                                                                                },
                                                           MMOE_panels_2x4_d2:  {
                                                                                  MapType: 'MMOE_maps_YandexSatellite',
-                                                                                 DivStyle: "width: 25%; height: 50%; float: left; background-color: blue;",
+                                                                                 DivStyle: "width: 25%; height: 50%; float: left;",
                                                                                }, 
                                                           MMOE_panels_2x4_d3:  {
                                                                                  MapType: 'MMOE_maps_YandexPublicMap',
-                                                                                 DivStyle: "width: 25%; height: 50%; float: left; background-color: red;",
+                                                                                 DivStyle: "width: 25%; height: 50%; float: left;",
                                                                                },
                                                           MMOE_panels_2x4_d4:  {
                                                                                  MapType: 'MMOE_maps_YandexHybrid',
-                                                                                 DivStyle: "width: 25%; height: 50%; float: left; background-color: blue;",
+                                                                                 DivStyle: "width: 25%; height: 50%; float: left;",
                                                                                }, 
                                                           MMOE_panels_2x4_d5:  {
                                                                                  MapType: 'MMOE_maps_GoogleRoadmap',
-                                                                                 DivStyle: "width: 25%; height: 50%; float: left; background-color: red;",
+                                                                                 DivStyle: "width: 25%; height: 50%; float: left;",
                                                                                },
                                                           MMOE_panels_2x4_d6:  {
                                                                                  MapType: 'MMOE_maps_GoogleSatellite',
-                                                                                 DivStyle: "width: 25%; height: 50%; float: left; background-color: blue;",
+                                                                                 DivStyle: "width: 25%; height: 50%; float: left;",
                                                                                }, 
                                                           MMOE_panels_2x4_d7:  {
                                                                                  MapType: 'MMOE_maps_GoogleHybrid',
-                                                                                 DivStyle: "width: 25%; height: 50%; float: left; background-color: red;",
+                                                                                 DivStyle: "width: 25%; height: 50%; float: left;",
                                                                                },
                                                           MMOE_panels_2x4_d8:  {
                                                                                  MapType: 'MMOE_maps_GoogleTerrain',
-                                                                                 DivStyle: "width: 25%; height: 50%; float: left; background-color: blue;",
+                                                                                 DivStyle: "width: 25%; height: 50%; float: left;",
                                                                                }, 
                                                         }  
                                                 },
                                MMOE_panels_1_1x2: {
+                              //  ┌───┐
+                              //  ├─┬─┤
+                              //  └─┴─┘
                                                   name: "Одна карта сверху, две снизу",
                                                   divs: {
                                                           MMOE_panels_1_1x2_d1:  {
                                                                                  MapType: 'MMOE_maps_YandexMap',
-                                                                                 DivStyle: "width: 100%; height: 50%; background-color: red;",
+                                                                                 DivStyle: "width: 100%; height: 50%;",
                                                                                },
                                                           MMOE_panels_1_1x2_d2:  {
                                                                                  MapType: 'MMOE_maps_YandexSatellite',
-                                                                                 DivStyle: "width: 50%; height: 50%; float: left; background-color: blue;",
+                                                                                 DivStyle: "width: 50%; height: 50%; float: left;",
                                                                                }, 
                                                           MMOE_panels_1_1x2_d3:  {
                                                                                  MapType: 'MMOE_maps_GoogleRoadmap',
-                                                                                 DivStyle: "width: 50%; height: 50%; float: left; background-color: red;",
+                                                                                 DivStyle: "width: 50%; height: 50%; float: left;",
                                                                                },
                                                         }  
                                                 },
                                MMOE_panels_1x2_1: {
+                               //  ┌─┬─┐
+                               //  ├─┴─┤
+                               //  └───┘
                                                   name: "Две карты сверху, одна снизу",
                                                   divs: {
                                                           MMOE_panels_1x2_1_d1:  {
                                                                                  MapType: 'MMOE_maps_YandexMap',
-                                                                                 DivStyle: "width: 50%; height: 50%; float: left;background-color: red;",
+                                                                                 DivStyle: "width: 50%; height: 50%; float: left;",
                                                                                },
                                                           MMOE_panels_1x2_1_d2:  {
                                                                                  MapType: 'MMOE_maps_YandexSatellite',
-                                                                                 DivStyle: "width: 50%; height: 50%; float: left; background-color: blue;",
+                                                                                 DivStyle: "width: 50%; height: 50%; float: left;",
                                                                                }, 
                                                           MMOE_panels_1x2_1_d3:  {
                                                                                  MapType: 'MMOE_maps_GoogleRoadmap',
-                                                                                 DivStyle: "width: 100%; height: 50%; float: left; background-color: red;",
+                                                                                 DivStyle: "width: 100%; height: 50%; float: left;",
                                                                                },
                                                         }  
                                                 },
+                              //  ┌┬──┐
+                              //  ├┤  │
+                              //  └┴──┘
+                              //
+                              //  ┌──┬┐
+                              //  │  ├┤
+                              //  └──┴┘
+                              //
+                              //  ┌───┐
+                              //  ├┬─┬┤
+                              //  └┴─┴┘
+                              //
+
 
                             },
                 //MMOE_obj - основной контейнер для хранения объектов - точек, треков и т.д
@@ -461,12 +433,18 @@ var mmoe_init_phase_final =  function ()
  {
 
 
-   dhtmlLoadScript("markerwithlabel.js");
+//    dhtmlLoadScript("markerwithlabel.js");
+    loadjscssfile("markerwithlabel.js", "js");
+    loadjscssfile("mmoe.css", "css");
 
     mmoe_InitBasicdiv(mmoe_container);
-    mmoe_InitTopMenu();
     mmoe_InitMaps();
+    mmoe_InitTopMenu();
     mmoe_ChangePanel(MMOE_config.MMOE_panels_cur);
+
+  str='MMOE (Multi Map Object Editor), version '+mmoeVersion+' (C) Yury Fedorov AKA Dr.Yu. Вся информация доступна <a href=\'README.TXT\' target=\'_blank\'>здесь</a>';
+  $('#'+MMOE_config.MMOE_config_int.MMOE_InfobarDivName).append(str);
+
  }
 
 
@@ -474,17 +452,18 @@ var mmoe_init_phase_final =  function ()
 //==================================================================================================================================================
 var mmoe_InitBasicdiv =  function (mmoe_container)
  {
-   $('#'+mmoe_container).append('<div id="MMOEtop" style="width: 100%; padding-top: 4px; height:'+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_TopMenuDivName].size+'; background-colr: blue;"></div>');
+   $('#'+mmoe_container).append('<div id="MMOEtop" style="width: 100%; height:'+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_TopMenuDivName].size+';"></div>');
    $('#'+mmoe_container).append('<div id="MMOEmiddle" style="position: relative; width: 100%;  height: -moz-calc(100% - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_TopMenuDivName].size+' - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_InfobarDivName].size+'); height: -webkit-calc(100% - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_TopMenuDivName].size+' - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_InfobarDivName].size+'); height: calc(100% - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_TopMenuDivName].size+' - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_InfobarDivName].size+');"></div>');
 
-   $('#MMOEmiddle').append('<div id="MMOEleft"  style="float: left; width: '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_PrimaryWSDivName].size+'; height: 100%; background-color: green;"></div>');
+   $('#MMOEmiddle').append('<div id="MMOEleft"  style="float: left; width: '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_PrimaryWSDivName].size+'; height: 100%;"></div>');
    $('#MMOEmiddle').append('<div id="MMOEint"   style="float: left; width: -moz-calc(100% - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_PrimaryWSDivName].size+' - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_SecondaryWSDivName].size+'); width: -webkit-calc(100% - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_PrimaryWSDivName].size+' - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_SecondaryWSDivName].size+'); width: calc(100% - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_PrimaryWSDivName].size+' - '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_SecondaryWSDivName].size+'); height:  100%;"></div>');
-   $('#MMOEmiddle').append('<div id="MMOEright" style="float: left; width: '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_SecondaryWSDivName].size+'; height: 100%; background-color: yellow; "></div>');
+   $('#MMOEmiddle').append('<div id="MMOEright" style="float: left; width: '+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_SecondaryWSDivName].size+'; height: 100%;"></div>');
 
-   $('#MMOEleft').append('<div id="MMOEproperties"  style="float: left; overflow-y: scroll; width: 100%; max-height: 25%; background-color: red;"></div>');
-   $('#MMOEleft').append('<div id="MMOEobjects"  style="float: left; overflow-y: scroll; width: 100%; max-height: 75%; background-color: blue;"></div>');
+//   $('#MMOEleft').append('<div id="MMOEleft_int"  style="float: left; w!idth: 100%; height: 100%;"></div>');
+   $('#MMOEleft').append('<div id="MMOEproperties"  style="float: left; overflow-y: auto; min-w!idth: 100%; w!idth: 100%; min-height: 1px; m!ax-height: 25%;"></div>');
+   $('#MMOEright').append('<div id="MMOEobjects"  style="float: left; overflow-y: auto; w!idth: 100%; m!ax-height: 75%;"></div>');
 
-   $('#'+mmoe_container).append('<div id="MMOEdown" style="width: 100%; height:'+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_InfobarDivName].size+'; background-colr: blue; float: none;"></div>');
+   $('#'+mmoe_container).append('<div id="MMOEdown" style="width: 100%; height:'+MMOE_config.MMOE_divs_int[MMOE_config.MMOE_config_int.MMOE_InfobarDivName].size+'; float: none;"></div>');
    $('#'+mmoe_container).append('<div id="MMOEnull" style="width: 0px; height: 0px; display: none;"></div>');
 
  }
@@ -496,6 +475,9 @@ var mmoe_InitTopMenu =  function ()
 //MMOE_TopMenuDivName
 
   //Создаем выпадающий список панелей. 
+  str='<div id="MMOEchangePanelDiv" style="float: left;"></div>';
+  $('#'+MMOE_config.MMOE_config_int.MMOE_TopMenuDivName).append(str);
+
   var str='<select onchange="mmoe_ChangePanel(this.options[this.selectedIndex].value)" style="float: left" >';
   for(curpanel in MMOE_config.MMOE_panels) {
    if ( curpanel == MMOE_config.MMOE_panels_cur) 
@@ -509,7 +491,9 @@ var mmoe_InitTopMenu =  function ()
   }
   str=str+'</select>'
 
-  $('#'+MMOE_config.MMOE_config_int.MMOE_TopMenuDivName).append(str);
+//  $('#'+MMOE_config.MMOE_config_int.MMOE_TopMenuDivName).append(str);  
+$('#MMOEchangePanelDiv').append(str);
+
 
   //Создаем кнопки управления
   str='<div id="MMOEactionButtons" style="float: left;">'
@@ -519,10 +503,10 @@ var mmoe_InitTopMenu =  function ()
 
   for(curbutton in MMOE_config.MMOE_action_buttons) 
     {
-      str='<div id="'+curbutton+'Div" style="float: left; width: 19px; height: 19px; margin-right: 5px;">'
-      str=str+'</div>';
+      str='<div id="'+curbutton+'Div" class="MMOE_action_buttons_div" style=""></div>';
+      //str=str+'</div>';
       $('#MMOEactionButtons').append(str);
-      str='<button id="'+curbutton+'" title="'+MMOE_config.MMOE_action_buttons[curbutton].title+'" type="button" style="padding: 0px; width: 19px; height: 19px;  border-style: solid;  display: inline-block; background: url(\''+MMOE_config.MMOE_action_buttons[curbutton].img+'\') no-repeat; " onclick="mmoe_EventButtonClick(\''+curbutton+'\')">'
+      str='<button id="'+curbutton+'" title="'+MMOE_config.MMOE_action_buttons[curbutton].title+'" type="button" class="MMOE_action_button" style="background: url(\''+MMOE_config.MMOE_action_buttons[curbutton].img+'\') no-repeat; " onclick="mmoe_EventButtonClick(\''+curbutton+'\')">'
       str=str+'</button>';
       $('#'+curbutton+'Div').append(str);
     }
@@ -552,10 +536,10 @@ var mmoe_ChangePanel =  function (panel)
 
  MMOE_config.MMOE_panels_cur=panel;
  //создаем DIV для выбраной панели
-   $('#MMOEint').append('<div id="'+panel+'" style="width: 100%; height: 100%;"></div>');
+   $('#MMOEint').append('<div id="'+panel+'"style="width: 100%; height: 100%;"></div>');
 //   $('#MMOEint').append('<div id="'+panel+'" style="width: 100%; height: 100%; position: absolute; top: 0px; left: 0px;"></div>');
    for(curdiv in MMOE_config.MMOE_panels[panel].divs) {
-     $('#'+panel).append('<div id="'+curdiv+'" style="'+MMOE_config.MMOE_panels[panel].divs[curdiv].DivStyle+'"></div>');       
+     $('#'+panel).append('<div id="'+curdiv+'"class="MMOE_panel_div"  style="'+MMOE_config.MMOE_panels[panel].divs[curdiv].DivStyle+'"></div>');       
      mmoe_MoveMapContainer (MMOE_config.MMOE_panels[panel].divs[curdiv].MapType,curdiv);
    }
  // Восстанавливаем центр и зум
@@ -598,7 +582,7 @@ var mmoe_MoveMapContainer =  function (mapId, target)
 var mmoe_InitMaps =  function ()
  {
    for(curmap in MMOE_config.MMOE_maps) {
-    $('#'+MMOE_config.MMOE_config_int.MMOE_NoneMapDivName).append('<div id="'+curmap+'" style="width: 100%; height: 100%; border: 0px solid gray;"></div>');
+    $('#'+MMOE_config.MMOE_config_int.MMOE_NoneMapDivName).append('<div id="'+curmap+'" class="MMOE_map_div" style=""></div>');
     switch (MMOE_config.MMOE_maps[curmap].provider) 
       {
        case 'GOOGLE':
@@ -800,25 +784,9 @@ var mmoe_InitObj = function ()
                 MMOE_config.MMOE_maps[curmap].markers[i].setMap(null);
               }
               MMOE_config.MMOE_maps[curmap].markers=[];
-        //     MMOE_config.MMOE_maps[curmap].map.setCenter(gcoords);
              for(curpoint in MMOE_config.MMOE_obj.MMOE_points) 
                {
                  var myLatlng = new google.maps.LatLng(MMOE_config.MMOE_obj.MMOE_points[curpoint].coordX, MMOE_config.MMOE_obj.MMOE_points[curpoint].coordY);
-//                 var icon = "https://chart.googleapis.com/chart?chst=d_bubble_icon_text_small&chld=ski|bb|"+MMOE_config.MMOE_obj.MMOE_points[curpoint].name+"|FFFFFF|000000";
-//1                 var icon = "https://chart.googleapis.com/chart?chst=d_map_pin_letter&chld="+MMOE_config.MMOE_obj.MMOE_points[curpoint].name+"|FF0000|000000";
-//                 var icon = "https://chart.googleapis.com/chart?chst=d_bubble_text_small&chld=edge_bc|"+MMOE_config.MMOE_obj.MMOE_points[curpoint].name+"|FFFFFF|000000";
-//                 var icon = "https://chart.googleapis.com/chart?chst=d_text_outline&chld=FFCC33|16|h|FF0000|b"+MMOE_config.MMOE_obj.MMOE_points[curpoint].name;
-//                 var icon = "https://chart.googleapis.com/chart?chst=d_text_outline&chld=FFCC33|16|h|FF0000|b|"+MMOE_config.MMOE_obj.MMOE_points[curpoint].name;
-//                 var marker = new google.maps.Marker(
-//                   {
-//                     position: myLatlng,
- //                    map: MMOE_config.MMOE_maps[curmap].map,
-//                     title: MMOE_config.MMOE_obj.MMOE_points[curpoint].name,
-
-//                   });
-//                 MMOE_config.MMOE_maps[curmap].markers.push(marker);
-
-//                 var icon = "https://chart.googleapis.com/chart?chst=d_text_outline&chld=FFCC33|16|h|FF0000|b|"+MMOE_config.MMOE_obj.MMOE_points[curpoint].name;
                  var icon = "https://chart.googleapis.com/chart?chst=d_map_pin_letter&chld=|FF0000|000000";
                  var marker = new MarkerWithLabel(
                    {
@@ -830,25 +798,45 @@ var mmoe_InitObj = function ()
                      labelClass: "labels", // the CSS class for the label
                      labelStyle: {opacity: 0.75} ,
                      icon: icon,
-                     draggable: true,
+                     //handCursor: 'url(images/chart.png) 11 40, default',
+                     //draggable: true,
 
 
                    });
-
-                 var setgoogleevent =  function (mmoeid)
+                  var setgoogleevent =  function (mmoeid)
                    {
                   
-                     google.maps.event.addListener(marker, 'click', function() {
-                       mmoe_EventOnClick('point', mmoeid,marker.getPosition().lat(),marker.getPosition().lng());
-                     });
-                     google.maps.event.addListener(marker, 'dragend', function(event) {
+                     google.maps.event.addListener(marker, 'click', function(event) 
+                       {
+                         console.log(event)
+//                       alertObj(event);        
+                         mmoe_EventOnClick('point',  mmoeid, event.latLng.lat(), event.latLng.lng());
+
+                       });
+                     google.maps.event.addListener(marker, 'dragend', function(event) 
+                      {
 //                       alertObj(marker.getPosition());
-                       //alertObj(event.latLng);
-                       mmoe_EventOnMove('point', mmoeid, event.latLng.lat(), event.latLng.lng());
-                     });
+                        //alertObj(event.latLng);
+                        mmoe_EventOnMove('point', mmoeid, event.latLng.lat(), event.latLng.lng());
+                      });
                    }
- 
-                setgoogleevent(curpoint);
+
+                  setgoogleevent(curpoint);
+
+                  switch (MMOE_config.MMOE_current_action) 
+                   {
+                    case 'MMOE_ab_Select':
+
+                      marker.setDraggable(true);
+                      marker.setCursor('default');
+                    break
+                    case 'MMOE_ab_Point':
+//                      marker.setCursor('url(images/chart.png) 11 40, default');
+                      marker.setCursor('crosshair');
+                     // marker.set(handCursor, 'url(images/chart.png) 11 40, default');
+                    break
+                   }
+
                  MMOE_config.MMOE_maps[curmap].markers.push(marker);
 
                }
@@ -874,8 +862,8 @@ var mmoe_InitObj = function ()
                      iconImageHref: 'images/chart.gif', // картинка иконки
                      iconImageSize: [21, 34], // размер иконки
                      iconImageOffset: [-10, -40], // позиция иконки
-                     iconContentOffset: [0, 40],
-                    draggable: true,
+                     iconContentOffset: [-18, 40],
+//                    draggable: true,
                    });
 //                myGeoObject.mmoeId=curpoint;
 
@@ -891,6 +879,20 @@ var mmoe_InitObj = function ()
                        mmoe_EventOnMove('point', mmoeid, event.originalEvent.target.geometry.getCoordinates()[0], event.originalEvent.target.geometry.getCoordinates()[1]);
                       });
                   }
+
+
+                  switch (MMOE_config.MMOE_current_action) 
+                   {
+                    case 'MMOE_ab_Select':
+                      myGeoObject.options.set('draggable',true);
+                      myGeoObject.options.set('cursor','Default');
+                    break
+                    case 'MMOE_ab_Point':
+                      myGeoObject.options.set('cursor','crosshair');
+                    break
+                   }
+
+                //console.log(myGeoObject.options);
                 setyandexevent(curpoint);
 
                 MMOE_config.MMOE_maps[curmap].map.geoObjects.add(myGeoObject)
@@ -960,17 +962,17 @@ var mmoe_EditPointMenu = function (pointId)
  // console.log("edit point "+pointId+MMOE_config.MMOE_obj.MMOE_points[pointId].name)
 
     $('#'+MMOE_config.MMOE_config_int.MMOE_PropertiesDivName).empty();
-    var str='Редактировать метку';
+    var str='<b>Редактировать метку</b><br>';
  
-    str=str+'<input type="text" id="MMOE_PointName" value="'+MMOE_config.MMOE_obj.MMOE_points[pointId].name+'"></input>'
-    str=str+'Координаты:<br>';
+    str=str+'Имя:<br><input type="text" id="MMOE_PointName" value="'+MMOE_config.MMOE_obj.MMOE_points[pointId].name+'"></input>'
+    str=str+'Координаты:<br>ГГ.ГГГГГГ°:<br>';
     str=str+MMOE_config.MMOE_obj.MMOE_points[pointId].coordX+'<br>';
     str=str+MMOE_config.MMOE_obj.MMOE_points[pointId].coordY+'<br>';
 
 
     str=str+'<input type="button" id="MMOE_PointSave" value="Сохранить"></input>'
     str=str+'<input type="button" id="MMOE_PointDelete" value="Удалить"></input>'
-
+    str=str+'<a href="http://goondel.ucoz.ru/" target="_blank">Конвертер</a>';
     $('#'+MMOE_config.MMOE_config_int.MMOE_PropertiesDivName).append(str);
     $('#MMOE_PointSave').click(function()
       {
@@ -992,6 +994,43 @@ var mmoe_EventButtonClick = function (ButtonId)
  {
 //  console.log('Button Click '+ButtonId);
   MMOE_config.MMOE_current_action=ButtonId;
+       
+//       map.setOptions({ draggableCursor: 'url(images/markers/you_marker.cur), default' });
+
+   switch (ButtonId) 
+    {
+     case 'MMOE_ab_Select':
+       for(curmap in MMOE_config.MMOE_maps) {
+        switch (MMOE_config.MMOE_maps[curmap].provider) 
+          {
+           case 'GOOGLE':
+            MMOE_config.MMOE_maps[curmap].map.setOptions({ draggableCursor: 'default' });
+           break
+           case 'YANDEX':
+            MMOE_config.MMOE_maps[curmap].map.options.set('dragCursor', 'arrow');
+           break
+          };   
+        }
+     break
+     case 'MMOE_ab_Point':
+       for(curmap in MMOE_config.MMOE_maps) {
+        switch (MMOE_config.MMOE_maps[curmap].provider) 
+          {
+           case 'GOOGLE':
+//            MMOE_config.MMOE_maps[curmap].map.setOptions({ draggableCursor: 'url(images/chart.png) 11 40, default' });
+            MMOE_config.MMOE_maps[curmap].map.setOptions({ draggableCursor: 'crosshair' });
+           break
+           case 'YANDEX':
+            MMOE_config.MMOE_maps[curmap].map.options.set('dragCursor', 'crosshair');
+           break
+          };   
+        }
+     break
+    }
+
+
+
+
 
   for(curbutton in MMOE_config.MMOE_action_buttons) {
    if (MMOE_config.MMOE_current_action == curbutton)
@@ -1004,6 +1043,9 @@ var mmoe_EventButtonClick = function (ButtonId)
      }
 
   }
+
+  mmoe_InitObj();
+
 
 //border-width: 0px 3px 3px 0px;
 // margin: 3px 0px 0px 3px
@@ -1033,7 +1075,7 @@ var mmoe_EventOnClick = function (objectType,objectId,coordX,coordY)
        };
    break
    case 'MMOE_ab_Point':
-     mmoe_CreatePoint(coordX,coordY);
+     mmoe_CreatePoint(coordX.toFixed(MMOE_config.MMOE_config_int.MMOE_CoordsLength),coordY.toFixed(MMOE_config.MMOE_config_int.MMOE_CoordsLength));
    break
    case 'MMOE_ab_Track':
    break
@@ -1053,8 +1095,8 @@ var mmoe_EventOnMove = function (objectType,objectId,coordX,coordY)
 //             mmoe_EditMapTypeMenu(objectId);
          break
          case 'point':
-           MMOE_config.MMOE_obj.MMOE_points[objectId].coordX=coordX;
-           MMOE_config.MMOE_obj.MMOE_points[objectId].coordY=coordY;
+           MMOE_config.MMOE_obj.MMOE_points[objectId].coordX=coordX.toFixed(MMOE_config.MMOE_config_int.MMOE_CoordsLength);
+           MMOE_config.MMOE_obj.MMOE_points[objectId].coordY=coordY.toFixed(MMOE_config.MMOE_config_int.MMOE_CoordsLength);
            mmoe_InitObj();
            mmoe_EditPointMenu(objectId);
          break
